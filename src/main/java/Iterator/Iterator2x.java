@@ -26,7 +26,7 @@ public class Iterator2x implements Iterator {
     @Override
     public Object next() throws NoSuchElementException {
 
-        if (hasNext()) {
+        if (size != 0 && hasNext()) {
             index++;
 
             if (this.j + 1 < values[i].length) {
