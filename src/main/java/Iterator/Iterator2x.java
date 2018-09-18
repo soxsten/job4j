@@ -1,6 +1,7 @@
 package Iterator;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class Iterator2x implements Iterator {
     private final int[][] values;
@@ -13,25 +14,20 @@ public class Iterator2x implements Iterator {
         this.values = values;
 
         for (int[] value : values) {
-            size += value.length;
+            size += value.length - 1;
         }
     }
 
     @Override
     public boolean hasNext() {
-        return index < size - 1;
+        return index <= size;
     }
 
     @Override
-    public Object next() {
+    public Object next() throws NoSuchElementException {
 
-        index++;
         if (hasNext()) {
-
-            if (index == 0) {
-                j++;
-                return values[0][0];
-            }
+            index++;
 
             if (this.j + 1 < values[i].length) {
                 this.j++;
@@ -40,8 +36,11 @@ public class Iterator2x implements Iterator {
                 this.j = 0;
                 this.i++;
             }
-        }
 
-        return values[i][j];
+            return values[i][j];
+
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 }
