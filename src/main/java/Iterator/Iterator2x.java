@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 
 public class Iterator2x implements Iterator {
     private final int[][] values;
-    private int index = -1;
     private int i = 0;
     private int j = -1;
 
@@ -16,20 +15,17 @@ public class Iterator2x implements Iterator {
     @Override
     public boolean hasNext() {
 
-        int length = values[i].length - 1;
-        if (j < length) {
+        if (j < values[i].length - 1) {
             return true;
         }
 
-        int length2 = values.length - 1;
-        return this.i < length2;
+        return i < values.length - 1;
     }
 
     @Override
     public Object next() throws NoSuchElementException {
 
-        if (hasNext()) {
-            index++;
+        if (values.length > 0 && hasNext()) {
 
             if (this.j + 1 < values[i].length) {
                 this.j++;
