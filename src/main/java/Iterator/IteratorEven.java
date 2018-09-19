@@ -27,11 +27,7 @@ public class IteratorEven implements Iterator {
 
     @Override
     public Object next() {
-        if (this.nextEvenIndex != -1) {
-            return getNextEven();
-        }
-
-        if (hasNext()) {
+        if (this.nextEvenIndex != -1 || hasNext()) {
             return getNextEven();
         }
         throw new NoSuchElementException();
