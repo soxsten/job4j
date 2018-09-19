@@ -31,7 +31,6 @@ public class IteratorEven implements Iterator {
             return getNextEven();
         }
 
-        hasNext();
         if (hasNext()) {
             return getNextEven();
         }
