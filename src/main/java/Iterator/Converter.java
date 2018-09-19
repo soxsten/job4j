@@ -21,11 +21,9 @@ class Converter {
                 }
 
                 if (!currentIterator.hasNext()) {
-                    setCurrentIterator();
-                }
-
-                if (currentIterator == null) {
-                    return false;
+                    if (!setCurrentIterator()) {
+                        return false;
+                    }
                 }
 
                 return currentIterator.hasNext();
@@ -43,7 +41,7 @@ class Converter {
         };
     }
 
-    private void setCurrentIterator() {
+    private boolean setCurrentIterator() {
         if (iterators.hasNext()) {
             boolean repeat = true;
 
@@ -53,10 +51,11 @@ class Converter {
                     repeat = false;
                 }
             } while (repeat && iterators.hasNext());
-
+            return true;
 
         } else {
             this.currentIterator = null;
+            return false;
         }
     }
 }
