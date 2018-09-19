@@ -8,7 +8,6 @@ public class IteratorEven implements Iterator {
     private int[] data;
     private int currentIndex = -1;
     private int nextEvenIndex = -1;
-    private boolean shouldUpdate;
 
     IteratorEven(int[] data) {
         this.data = data;
@@ -29,22 +28,19 @@ public class IteratorEven implements Iterator {
     @Override
     public Object next() {
         if (this.nextEvenIndex != -1) {
-            this.currentIndex = this.nextEvenIndex;
-            resetNextEvenIndex();
-            return data[currentIndex];
+            return getNextEven();
         }
+
+        hasNext();
         if (hasNext()) {
-            resetNextEvenIndex();
-            while (++currentIndex < data.length) {
-                if (data[currentIndex] % 2 == 0) {
-                    return data[currentIndex];
-                }
-            }
+            return getNextEven();
         }
         throw new NoSuchElementException();
     }
 
-    private void resetNextEvenIndex() {
+    private int getNextEven() {
+        this.currentIndex = this.nextEvenIndex;
         this.nextEvenIndex = -1;
+        return data[currentIndex];
     }
 }
