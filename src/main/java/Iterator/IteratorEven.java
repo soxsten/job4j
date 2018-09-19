@@ -6,7 +6,9 @@ import java.util.NoSuchElementException;
 public class IteratorEven implements Iterator {
 
     private int[] data;
-    private int index = -1;
+    private int currentIndex = -1;
+    private int nextEvenIndex = -1;
+    private boolean shouldUpdate;
 
     IteratorEven(int[] data) {
         this.data = data;
@@ -14,10 +16,10 @@ public class IteratorEven implements Iterator {
 
     @Override
     public boolean hasNext() {
-        int index = this.index;
-        while (++index < data.length) {
-            boolean isEven = data[index] % 2 == 0;
-            if (isEven) {
+        int currentIndex = this.currentIndex;
+        while (++currentIndex < data.length) {
+            if (data[currentIndex] % 2 == 0) {
+                this.nextEvenIndex = currentIndex;
                 return true;
             }
         }
@@ -26,14 +28,23 @@ public class IteratorEven implements Iterator {
 
     @Override
     public Object next() {
+        if (this.nextEvenIndex != -1) {
+            this.currentIndex = this.nextEvenIndex;
+            resetNextEvenIndex();
+            return data[currentIndex];
+        }
         if (hasNext()) {
-            while (++index < data.length) {
-                boolean isEven = data[index] % 2 == 0;
-                if (isEven) {
-                    return data[index];
+            resetNextEvenIndex();
+            while (++currentIndex < data.length) {
+                if (data[currentIndex] % 2 == 0) {
+                    return data[currentIndex];
                 }
             }
         }
         throw new NoSuchElementException();
+    }
+
+    private void resetNextEvenIndex() {
+        this.nextEvenIndex = -1;
     }
 }
