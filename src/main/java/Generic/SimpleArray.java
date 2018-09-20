@@ -13,7 +13,7 @@ public class SimpleArray<T> implements Iterable<T> {
         this.data = new Object[size];
     }
 
-    void add(T model) {
+    public void add(T model) {
         if (position < data.length) {
             this.data[position++] = model;
 
@@ -22,16 +22,16 @@ public class SimpleArray<T> implements Iterable<T> {
         }
     }
 
-    void set(int index, T model) {
+    public void set(int index, T model) {
         this.data[index] = model;
     }
 
-    void delete(int index) {
+    public void delete(int index) {
         this.data[index] = null;
     }
 
     @SuppressWarnings("unchecked")
-    T get(int index) {
+    public T get(int index) {
         return (T) this.data[index];
     }
 
