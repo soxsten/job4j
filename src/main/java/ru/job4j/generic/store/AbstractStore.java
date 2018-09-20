@@ -6,7 +6,7 @@ import ru.job4j.generic.Store;
 
 import java.util.Iterator;
 
-public abstract class AbstractStore<T extends Base> implements Store {
+public abstract class AbstractStore<T extends Base> implements Store<T> {
 
     private SimpleArray<T> data;
 
@@ -39,7 +39,7 @@ public abstract class AbstractStore<T extends Base> implements Store {
     }
 
     @Override
-    public Base findById(String id) {
+    public T findById(String id) {
         return data.get(convertToIntFor(id));
     }
 
