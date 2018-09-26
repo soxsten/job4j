@@ -3,11 +3,14 @@ package ru.job4j.generic.store;
 import Generic.SimpleArray;
 import ru.job4j.generic.Role;
 
+@SuppressWarnings("unchecked")
 public class RoleStore extends AbstractStore {
 
-    private SimpleArray<Role> data;
+    RoleStore(SimpleArray<Role> data) {
+        super(data);
+    }
 
-    public RoleStore(SimpleArray<Role> data) {
-        this.data = data;
+    public SimpleArray<Role> getData() {
+        return super.getData();
     }
 }

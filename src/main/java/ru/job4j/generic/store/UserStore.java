@@ -8,6 +8,6 @@ public class UserStore extends AbstractStore {
     private SimpleArray<User> data;
 
     public UserStore(SimpleArray<User> data) {
-        this.data = data;
+        super(data);
     }
 }
