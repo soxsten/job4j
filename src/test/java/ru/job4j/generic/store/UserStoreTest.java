@@ -34,6 +34,55 @@ public class UserStoreTest {
         Assert.assertTrue(isRolesEquals(expectedData.get(4), actual.get(4)));
     }
 
+    @Test
+    public void add() {
+        //given
+        RoleStore roleStore = new RoleStore(new SimpleArray<>(5));
+        Role expected = new Role("0");
+        roleStore.add(expected);
+
+        //when
+        SimpleArray<Role> data = roleStore.getData();
+
+        //then
+        Role actual = data.get(0);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void delete() {
+
+        //given
+        RoleStore roleStore = new RoleStore(data);
+
+        //when
+        String roleId = "2";
+        roleStore.delete(roleId);
+        SimpleArray<Role> data = roleStore.getData();
+
+        //then
+        boolean isContain = false;
+        for (Role role : data) {
+            if (role.getId().equals(roleId)) {
+                isContain = true;
+            }
+        }
+        Assert.assertFalse(isContain);
+    }
+
+    @Test
+    public void findById() {
+        //given
+        RoleStore roleStore = new RoleStore(data);
+        Role expected = data.get(3);
+
+        //when
+        Role actual = (Role) roleStore.findById("3");
+
+        //then
+        Assert.assertEquals(expected, actual);
+    }
+
     private void fillData() {
         data.add(new Role("0"));
         data.add(new Role("1"));
