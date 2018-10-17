@@ -37,8 +37,8 @@ public class DynamicContainer<E> implements Iterable<E> {
         return modCount;
     }
 
-    public Object[] getContainer() {
-        return container;
+    public int getSize() {
+        return this.container.length;
     }
 
     private boolean isContainerFull() {
