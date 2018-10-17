@@ -38,9 +38,10 @@ public class SimpleArrayListTest {
 
         //when
         SimpleArrayList<Integer> actual = getList();
-        actual.delete();
+        Integer delete = actual.delete();
 
         //then
+        assertThat(delete, is(3));
         assertThat(isListEquals(expected, actual), is(true));
     }
 

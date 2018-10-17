@@ -24,12 +24,13 @@ public class SimpleArrayList<E> {
      * Реализовать метод удаления первого элемента в списке.
      */
     public E delete() {
+        E date = this.first.date;
         this.first = first.next;
-        if (this.size == 0) {
+        if (this.size <= 0) {
             throw new NoSuchElementException();
         }
         this.size--;
-        return get(1);
+        return date;
     }
 
     /**
