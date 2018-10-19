@@ -18,22 +18,19 @@ public class DynamicLinkContainer<E> implements Iterable<E> {
     }
 
     public E get(int index) {
-
         if (index < 0) {
             return null;
         }
-
-        Node<E> next = first;
+        Node<E> position = first;
         for (int i = 0; i <= index; i++) {
-            if (next == null) {
+            if (position == null) {
                 break;
             }
             if (i == index) {
-                return next.date;
+                return position.date;
             }
-            next = next.next;
+            position = position.next;
         }
-
         return null;
     }
 
@@ -57,7 +54,10 @@ public class DynamicLinkContainer<E> implements Iterable<E> {
 
             @Override
             public boolean hasNext() {
-                return pos.next != null;
+                if (pos == null) {
+                    return false;
+                }
+                return pos.date != null || pos.next != null;
             }
 
             @Override
@@ -66,8 +66,9 @@ public class DynamicLinkContainer<E> implements Iterable<E> {
                     throw new ConcurrentModificationException();
                 }
                 if (hasNext()) {
+                    E current = pos.date;
                     pos = pos.next;
-                    return pos.date;
+                    return current;
                 }
                 return null;
             }
