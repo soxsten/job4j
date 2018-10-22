@@ -1,30 +1,32 @@
 package ru.job4j.list;
 
 public class DetectCycle {
-    private DynamicContainer<Integer> hashcodes = new DynamicContainer<>();
 
     public boolean hasCycle(Node first) {
-        while (first.next != null) {
-            if (isContain(first)) {
-                return true;
-            }
-            first = first.next;
+        if (first == null) {
+            return false;
         }
-        return false;
-    }
 
-    private boolean isContain(Node node) {
-        int hashCode = node.hashCode();
-        for (int i = 0; i < hashcodes.getSize(); i++) {
-            if (hashcodes.get(i) == null) {
-                continue;
+        Node tortoise = first;
+        Node hare = first;
+
+        while (true) {
+            tortoise = tortoise.next;
+
+            if (hare.next != null) {
+                hare = hare.next.next;
+            } else {
+                return false;
             }
-            if (hashcodes.get(i) == hashCode) {
+
+            if ((tortoise == null) || (hare == null)) {
+                return false;
+            }
+
+            if (tortoise == hare) {
                 return true;
             }
         }
-        hashcodes.add(hashCode);
-        return false;
     }
 
     static class Node<T> {
