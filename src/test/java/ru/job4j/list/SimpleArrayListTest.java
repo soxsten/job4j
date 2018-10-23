@@ -1,6 +1,10 @@
 package ru.job4j.list;
 
+import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -43,6 +47,22 @@ public class SimpleArrayListTest {
         //then
         assertThat(delete, is(3));
         assertThat(isListEquals(expected, actual), is(true));
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void iterator() {
+        //given
+        SimpleArrayList<Integer> list = getList();
+        //when then
+        Iterator<Integer> iterator = list.iterator();
+        Assert.assertTrue(iterator.hasNext());
+        Assert.assertThat(iterator.next(), is(3));
+        Assert.assertTrue(iterator.hasNext());
+        Assert.assertThat(iterator.next(), is(2));
+        Assert.assertTrue(iterator.hasNext());
+        Assert.assertThat(iterator.next(), is(1));
+        Assert.assertFalse(iterator.hasNext());
+        iterator.next();
     }
 
     private boolean isListEquals(SimpleArrayList expected, SimpleArrayList actual) {
