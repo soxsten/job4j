@@ -41,7 +41,7 @@ public class SimpleArrayList<E> {
         for (int i = 0; i < index; i++) {
             result = result.next;
         }
-        return result.date;
+        return result == null ? null : result.date;
     }
 
     /**
