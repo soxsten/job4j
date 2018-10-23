@@ -5,9 +5,9 @@ import java.util.Iterator;
 
 public class DynamicLinkContainer<E> implements Iterable<E> {
 
-    private Node<E> first;
-    private int modeCount;
-    private int size;
+    protected Node<E> first;
+    protected int modeCount;
+    protected int size;
 
     public void add(E value) {
         Node<E> newLink = new Node<>(value);
@@ -42,7 +42,7 @@ public class DynamicLinkContainer<E> implements Iterable<E> {
         modeCount++;
     }
 
-    public int getModCount() {
+    private int getModCount() {
         return modeCount;
     }
 
@@ -75,7 +75,7 @@ public class DynamicLinkContainer<E> implements Iterable<E> {
         };
     }
 
-    private static class Node<E> {
+    protected static class Node<E> {
         E date;
         Node<E> next;
 

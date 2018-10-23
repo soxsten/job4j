@@ -3,6 +3,8 @@ package ru.job4j.list;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.NoSuchElementException;
+
 import static org.hamcrest.Matchers.is;
 
 public class StackContainerTest {
@@ -23,7 +25,7 @@ public class StackContainerTest {
         Assert.assertThat(container.getSize(), is(3));
     }
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void should_poll_correctly() {
         //given
         container = getContainer();
@@ -32,7 +34,7 @@ public class StackContainerTest {
         Assert.assertThat(container.poll(), is(3));
         Assert.assertThat(container.poll(), is(2));
         Assert.assertThat(container.poll(), is(1));
-        Assert.assertNull(container.poll());
+        container.poll();
     }
 
     @Test
