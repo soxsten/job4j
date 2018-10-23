@@ -2,6 +2,7 @@ package ru.job4j.list;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class DynamicLinkContainer<E> implements Iterable<E> {
 
@@ -73,6 +74,17 @@ public class DynamicLinkContainer<E> implements Iterable<E> {
                 return null;
             }
         };
+    }
+
+    public E deleteFirst() {
+        if (this.size <= 0) {
+            throw new NoSuchElementException();
+        }
+        Node first = this.first;
+        E date = (E) first.date;
+        this.first = this.first.next;
+        this.size--;
+        return date;
     }
 
     protected static class Node<E> {
