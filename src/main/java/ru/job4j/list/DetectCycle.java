@@ -10,16 +10,11 @@ public class DetectCycle {
         Node tortoise = first;
         Node hare = first;
 
-        while (true) {
+        while (hare.next != null && tortoise.next != null) {
             tortoise = tortoise.next;
+            hare = hare.next.next;
 
-            if (hare.next != null) {
-                hare = hare.next.next;
-            } else {
-                return false;
-            }
-
-            if ((tortoise == null) || (hare == null)) {
+            if (hare == null) {
                 return false;
             }
 
@@ -27,6 +22,8 @@ public class DetectCycle {
                 return true;
             }
         }
+
+        return false;
     }
 
     static class Node<T> {
