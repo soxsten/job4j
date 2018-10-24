@@ -19,7 +19,7 @@ public class BasicEquals {
         map.put(a, "1");
         map.put(b, "1");
         System.out.println(map);
-        Assert.assertEquals(a, b);
+        Assert.assertNotEquals(a, b);
         Assert.assertEquals(a.hashCode(), b.hashCode());
     }
 
