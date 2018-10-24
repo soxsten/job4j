@@ -19,7 +19,7 @@ public class BasicHashcode {
         map.put(b, "1");
         System.out.println(map);
         Assert.assertEquals(a, b);
-        Assert.assertEquals(a.hashCode(), b.hashCode());
+        Assert.assertNotEquals(a.hashCode(), b.hashCode());
     }
 
     private class NewUser extends User {
