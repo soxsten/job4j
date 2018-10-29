@@ -11,19 +11,19 @@ public class MyHashMap<K, V> implements Iterable<V> {
     private int size = 0;
 
     public boolean insert(K key, V value) {
-        Node<K, V> newNode = new Node<>(key, value, value.hashCode());
         for (int i = 0; i < data.length; i++) {
             if (data[i] == null) {
+                Node<K, V> newNode = new Node<>(value.hashCode(), key, value, i);
                 data[i] = newNode;
                 size++;
                 return true;
             }
-            Node node = (Node) data[i];
-            if (key == node.getKey()) {
-                return false;
-            }
             if (data[i] != null && i == data.length - 1) {
                 increaseDataSize();
+            }
+            Node node = (Node) data[i];
+            if (key == node.getKey()) {
+                break;
             }
         }
         return false;
@@ -37,7 +37,7 @@ public class MyHashMap<K, V> implements Iterable<V> {
     boolean delete(K key) {
         Node node = findBy(key);
         if (node != null) {
-            node = null;
+            data[node.id] = null;
             size--;
             return true;
         }
@@ -50,9 +50,11 @@ public class MyHashMap<K, V> implements Iterable<V> {
 
     private Node findBy(K key) {
         for (Object o : data) {
-            Node node = (Node) o;
-            if (key == node.getKey()) {
-                return node;
+            if (o != null) {
+                Node node = (Node) o;
+                if (key == node.getKey()) {
+                    return node;
+                }
             }
         }
         return null;
@@ -71,7 +73,7 @@ public class MyHashMap<K, V> implements Iterable<V> {
 
             @Override
             public boolean hasNext() {
-                return index < data.length;
+                return index < getSize();
             }
 
             @Override
@@ -89,11 +91,13 @@ public class MyHashMap<K, V> implements Iterable<V> {
         final int hash;
         final K key;
         V value;
+        final int id;
 
-        public Node(K key, V value, int hash) {
+        public Node(int hash, K key, V value, int id) {
+            this.hash = hash;
             this.key = key;
             this.value = value;
-            this.hash = hash;
+            this.id = id;
         }
 
         public int getHash() {

@@ -2,6 +2,9 @@ package ru.job4j.map;
 
 import org.junit.Test;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
@@ -76,5 +79,47 @@ public class MyHashMapTest {
         assertTrue(eleventh);
         assertThat(map.get("eleventh"), is(11));
         assertThat(map.getSize(), is(expectedMapSize));
+    }
+
+    @Test
+    public void should_delete_correctly() {
+        //given
+        MyHashMap<String, Integer> map = new MyHashMap<>();
+        int expectedMapSize = 2;
+        map.insert("first", 1);
+        map.insert("second", 2);
+        map.insert("third", 3);
+
+        //when
+        boolean secondIsDeleted = map.delete("second");
+        boolean secondCantBeenDeleted = map.delete("second");
+
+        //then
+        assertTrue(secondIsDeleted);
+        assertFalse(secondCantBeenDeleted);
+        assertThat(map.getSize(), is(expectedMapSize));
+        assertNull(map.get("second"));
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void should_iterate_correctly() {
+        //given
+        MyHashMap<String, Integer> map = new MyHashMap<>();
+        map.insert("first", 1);
+        map.insert("second", 2);
+        map.insert("third", 3);
+
+        //when
+        Iterator<Integer> iterator = map.iterator();
+
+        //then
+        assertTrue(iterator.hasNext());
+        assertThat(iterator.next(), is(1));
+        assertTrue(iterator.hasNext());
+        assertThat(iterator.next(), is(2));
+        assertTrue(iterator.hasNext());
+        assertThat(iterator.next(), is(3));
+        assertFalse(iterator.hasNext());
+        iterator.next();
     }
 }
