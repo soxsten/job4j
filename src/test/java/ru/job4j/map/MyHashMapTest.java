@@ -114,12 +114,28 @@ public class MyHashMapTest {
 
         //then
         assertTrue(iterator.hasNext());
-        assertThat(iterator.next(), is(1));
-        assertTrue(iterator.hasNext());
         assertThat(iterator.next(), is(2));
+        assertTrue(iterator.hasNext());
+        assertThat(iterator.next(), is(1));
         assertTrue(iterator.hasNext());
         assertThat(iterator.next(), is(3));
         assertFalse(iterator.hasNext());
         iterator.next();
+    }
+
+    @Test
+    public void should_delete_null_key() {
+        //given
+        MyHashMap<String, Integer> map = new MyHashMap<>();
+        map.insert(null, 1);
+        map.insert("second", 2);
+        map.insert("third", 3);
+        int expectedMapSize = 2;
+
+        //when
+        map.delete(null);
+
+        //then
+        assertThat(map.getSize(), is(expectedMapSize));
     }
 }
