@@ -13,14 +13,25 @@ public class MyTreeMap<T extends Comparable<T>> implements SimpleTree<T> {
             root = new Node<>(parent);
             size++;
         }
-        Optional<Node<T>> optional = findBy(parent);
-        if (optional.isPresent()) {
-            Node<T> node = optional.get();
-            node.add(new Node<>(child));
-            size++;
-            return true;
+        if (isChildUniq(child)) {
+            Optional<Node<T>> optional = findBy(parent);
+            if (optional.isPresent()) {
+                Node<T> node = optional.get();
+                node.add(new Node<>(child));
+                size++;
+                return true;
+            }
         }
         return false;
+    }
+
+    private boolean isChildUniq(T child) {
+        for (T next : this) {
+            if (child.equals(next)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

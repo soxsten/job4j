@@ -21,9 +21,11 @@ public class MyTreeMapTest {
         tree.add(1, 3);
         tree.add(1, 4);
         tree.add(4, 5);
+        boolean isDuplicateAdded = tree.add(4, 4);
         tree.add(5, 6);
 
         //then
+        assertFalse(isDuplicateAdded);
         assertThat(tree.getSize(), is(expectedSize));
     }
 
