@@ -30,7 +30,8 @@ public class MyHashMap<K, V> implements Iterable<V> {
     }
 
     private static int indexFor(int h, int length) {
-        return h & (length - 1);
+        int i = h & (length - 2);
+        return i + 1;
     }
 
     public boolean insert(K key, V value) {
@@ -50,13 +51,16 @@ public class MyHashMap<K, V> implements Iterable<V> {
         } else {
             putForNullKey(value);
             size++;
+            return true;
         }
-        return false;
     }
 
     private boolean shouldIncreaseDataSize() {
-        int currentThreshold = (int) (data.length * loadFactor);
-        return currentThreshold >= threshold;
+        if (size >= threshold) {
+            threshold = (int) (data.length * loadFactor);
+            return true;
+        }
+        return false;
     }
 
     private void putForNullKey(V value) {
@@ -100,9 +104,18 @@ public class MyHashMap<K, V> implements Iterable<V> {
     }
 
     private void increaseDataSize() {
-        Object[] newData = new Object[(int) (data.length * 1.5)];
-        System.arraycopy(data, 0, newData, 0, data.length);
-        data = newData;
+        int oldLength = data.length;
+        Object[] oldData = new Object[oldLength];
+        System.arraycopy(data, 0, oldData, 0, oldLength);
+        data = new Object[(int) (oldLength * 1.5)];
+        for (int i = 0; i < oldLength; i++) {
+            if (oldData[i] != null) {
+                Node node = (Node) oldData[i];
+                K key = (K) node.key;
+                V value = (V) node.value;
+                insert(key, value);
+            }
+        }
     }
 
     @Override

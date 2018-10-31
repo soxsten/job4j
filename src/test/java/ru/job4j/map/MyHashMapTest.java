@@ -14,22 +14,19 @@ public class MyHashMapTest {
     public void should_insert_correctly_without_duplicate() {
         //given
         MyHashMap<String, Integer> map = new MyHashMap<>();
-        int expectedMapSize = 3;
+        int expectedMapSize = 2;
 
         //when
         boolean first = map.insert("first", 1);
         boolean second = map.insert("second", 2);
-        boolean third = map.insert("third", 3);
-        boolean fourth = map.insert("third", 4);
+        boolean thirdCollision = map.insert("third", 3);
 
         //then
         assertTrue(first);
         assertThat(map.get("first"), is(1));
         assertTrue(second);
         assertThat(map.get("second"), is(2));
-        assertTrue(third);
-        assertThat(map.get("third"), is(3));
-        assertFalse(fourth);
+        assertNull(map.get("third"));
         assertThat(map.getSize(), is(expectedMapSize));
     }
 
@@ -85,10 +82,9 @@ public class MyHashMapTest {
     public void should_delete_correctly() {
         //given
         MyHashMap<String, Integer> map = new MyHashMap<>();
-        int expectedMapSize = 2;
+        int expectedMapSize = 1;
         map.insert("first", 1);
         map.insert("second", 2);
-        map.insert("third", 3);
 
         //when
         boolean secondIsDeleted = map.delete("second");
@@ -105,20 +101,21 @@ public class MyHashMapTest {
     public void should_iterate_correctly() {
         //given
         MyHashMap<String, Integer> map = new MyHashMap<>();
-        map.insert("first", 1);
-        map.insert("second", 2);
-        map.insert("third", 3);
+        map.insert(null, 0);
+        map.insert("a", 1);
+        map.insert("ab", 2);
+        map.insert("bc", 3);
 
         //when
         Iterator<Integer> iterator = map.iterator();
 
         //then
         assertTrue(iterator.hasNext());
-        assertThat(iterator.next(), is(2));
+        assertThat(iterator.next(), is(0));
         assertTrue(iterator.hasNext());
         assertThat(iterator.next(), is(1));
         assertTrue(iterator.hasNext());
-        assertThat(iterator.next(), is(3));
+        assertThat(iterator.next(), is(2));
         assertFalse(iterator.hasNext());
         iterator.next();
     }
@@ -127,7 +124,7 @@ public class MyHashMapTest {
     public void should_delete_null_key() {
         //given
         MyHashMap<String, Integer> map = new MyHashMap<>();
-        map.insert(null, 1);
+        boolean firstNull = map.insert(null, 1);
         map.insert("second", 2);
         map.insert("third", 3);
         int expectedMapSize = 2;
@@ -136,6 +133,7 @@ public class MyHashMapTest {
         map.delete(null);
 
         //then
+        assertTrue(firstNull);
         assertThat(map.getSize(), is(expectedMapSize));
     }
 }
