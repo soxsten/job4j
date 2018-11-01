@@ -84,6 +84,20 @@ public class MyTreeMap<T extends Comparable<T>> implements SimpleTree<T> {
         };
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean isBinary() {
+        for (T t : this) {
+            Optional<Node<T>> optional = findBy(t);
+            if (optional.isPresent()) {
+                List<Node<T>> leaves = optional.get().leaves();
+                if (leaves.size() > 2) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public int getSize() {
         return size;
     }

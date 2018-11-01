@@ -1,5 +1,6 @@
 package ru.job4j.map;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -67,5 +68,36 @@ public class MyTreeMapTest {
         assertTrue(iterator.hasNext());
         assertThat(iterator.next(), is(6));
         iterator.next();
+    }
+
+    @Test
+    public void isBinaty_should_return_true() {
+        //given
+        MyTreeMap<Integer> tree = new MyTreeMap<>();
+        tree.add(1, 2);
+        tree.add(1, 3);
+        tree.add(2, 4);
+        tree.add(2, 5);
+        tree.add(5, 6);
+        tree.add(5, 7);
+
+        //when then
+        Assert.assertTrue(tree.isBinary());
+    }
+
+    @Test
+    public void isBinaty_should_return_false() {
+        //given
+        MyTreeMap<Integer> tree = new MyTreeMap<>();
+        tree.add(1, 2);
+        tree.add(1, 3);
+        tree.add(2, 4);
+        tree.add(2, 5);
+        tree.add(5, 6);
+        tree.add(5, 7);
+        tree.add(5, 8);
+
+        //when then
+        Assert.assertFalse(tree.isBinary());
     }
 }
