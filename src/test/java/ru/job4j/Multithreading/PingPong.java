@@ -16,11 +16,15 @@ public class PingPong extends Application {
         Group group = new Group();
         Rectangle rect = new Rectangle(50, 100, 10, 10);
         group.getChildren().add(rect);
-        new Thread(new RectangleMove(rect)).start();
+        Thread thread = new Thread(new RectangleMove(rect));
+        thread.start();
         stage.setScene(new Scene(group, limitX, limitY));
         stage.setTitle(JOB4J);
         stage.setResizable(false);
         stage.show();
+        stage.setOnCloseRequest(
+                event -> thread.interrupt()
+        );
     }
 }
 
@@ -36,7 +40,7 @@ class RectangleMove implements Runnable {
         double speed = 5;
         double speedX = speed;
         double speedY = speed;
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
             double currentX = this.rect.getX();
             double newPosX = currentX + speed;
             if (shouldChangeDirectionFor(newPosX)) {
@@ -54,7 +58,7 @@ class RectangleMove implements Runnable {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                return;
             }
         }
     }
