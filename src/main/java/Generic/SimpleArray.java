@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class SimpleArray<T> implements Iterable<T> {
-
     private Object[] data;
     private int position = 0;
     private int index = 0;
@@ -16,7 +15,6 @@ public class SimpleArray<T> implements Iterable<T> {
     public void add(T model) {
         if (position < data.length) {
             this.data[position++] = model;
-
         } else {
             throw new IndexOutOfBoundsException();
         }

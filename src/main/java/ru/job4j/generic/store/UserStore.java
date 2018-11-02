@@ -4,7 +4,6 @@ import Generic.SimpleArray;
 import ru.job4j.generic.User;
 
 public class UserStore extends AbstractStore {
-
     private SimpleArray<User> data;
 
     public UserStore(SimpleArray<User> data) {

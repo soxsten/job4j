@@ -5,7 +5,6 @@ import ru.job4j.generic.Role;
 
 @SuppressWarnings("unchecked")
 public class RoleStore extends AbstractStore {
-
     RoleStore(SimpleArray<Role> data) {
         super(data);
     }
