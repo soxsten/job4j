@@ -6,9 +6,12 @@ public class StackContainer<T> {
     private DynamicLinkContainer<T> container = new DynamicLinkContainer<>();
 
     public T poll() {
-        T t = (T) container.get(0);
-        container.deleteFirst();
-        return t;
+        if (container.getSize() > 0) {
+            T t = (T) container.get(0);
+            container.deleteFirst();
+            return t;
+        }
+        return null;
     }
 
     public void push(T value) {
