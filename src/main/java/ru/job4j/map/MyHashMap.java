@@ -29,9 +29,8 @@ public class MyHashMap<K, V> implements Iterable<V> {
         return h ^ (h >>> 7) ^ (h >>> 4);
     }
 
-    private static int indexFor(int h, int length) {
-        int i = h & (length - 2);
-        return i + 1;
+    private static int indexFor(int hash, int length) {
+        return (hash & 0x7fffffff) % length;
     }
 
     public boolean insert(K key, V value) {
@@ -108,6 +107,7 @@ public class MyHashMap<K, V> implements Iterable<V> {
         Object[] oldData = new Object[oldLength];
         System.arraycopy(data, 0, oldData, 0, oldLength);
         data = new Object[(int) (oldLength * 1.5)];
+        int currentSize = getSize();
         for (int i = 0; i < oldLength; i++) {
             if (oldData[i] != null) {
                 Node node = (Node) oldData[i];
@@ -116,6 +116,7 @@ public class MyHashMap<K, V> implements Iterable<V> {
                 insert(key, value);
             }
         }
+        this.size = currentSize;
     }
 
     @Override
