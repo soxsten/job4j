@@ -38,6 +38,10 @@ public class SimpleBlockingQueue<T> {
         return queue.poll();
     }
 
+    public boolean isEmpty() {
+        return count <= 0;
+    }
+
     private boolean isFull() {
         return count > 10;
     }
