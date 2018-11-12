@@ -2,6 +2,7 @@ package ru.job4j.generic.finaltask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class Store {
     private List<User> users;
@@ -20,7 +21,7 @@ public final class Store {
         return null;
     }
 
-    public boolean updateUserById(User updated) {
+    public boolean updateUserBy(User updated) {
         if (validationFor(updated) && validationFor(updated.getId())) {
             User user = users.get(updated.getId());
             if (user != null) {
@@ -48,6 +49,7 @@ public final class Store {
     public boolean deleteUser(User user) {
         if (validationFor(user) && validationFor(user.getId())) {
             users.set(user.getId(), null);
+            info.deleteUser(user);
             return true;
         }
         return false;
@@ -86,6 +88,20 @@ final class User {
     public String getName() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id &&
+                Objects.equals(name, user.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
 }
 
 class Info {
@@ -95,12 +111,12 @@ class Info {
     private int deletedUsers = 0;
     private int changedUsers = 0;
 
-    public Info(List<User> previous) {
+    Info(List<User> previous) {
         this.previous = getCopyOf(previous);
         this.current = getCopyOf(previous);
     }
 
-    public Info(Info that) {
+    Info(Info that) {
         this.previous = that.getCopyOf(that.previous);
         this.current = that.getCopyOf(that.current);
         this.newUsers = that.newUsers;
@@ -108,35 +124,50 @@ class Info {
         this.changedUsers = that.changedUsers;
     }
 
-    public void updateInfo(User updated) {
-        User user = current.get(updated.getId());
-        user = updated.getCopy();
+    void updateInfo(User updated) {
+        current.set(updated.getId(), updated);
         changedUsers++;
     }
 
-    public void deleteUser(User user) {
-        User dataUser = current.get(user.getId());
-        dataUser = null;
+    void deleteUser(User user) {
+        current.set(user.getId(), null);
         deletedUsers++;
     }
 
-    public void addUser(User user) {
+    void addUser(User user) {
         current.add(user.getCopy());
         newUsers++;
+    }
+
+    public List<User> getPrevious() {
+        return getCopyOf(previous);
+    }
+
+    public List<User> getCurrent() {
+        return getCopyOf(current);
+    }
+
+    public int getNewUsers() {
+        return newUsers;
+    }
+
+    public int getDeletedUsers() {
+        return deletedUsers;
+    }
+
+    public int getChangedUsers() {
+        return changedUsers;
     }
 
     private List<User> getCopyOf(List<User> previous) {
         List<User> users = new ArrayList<>();
         for (User user : previous) {
-            users.add(user.getCopy());
+            if (user != null) {
+                users.add(user.getCopy());
+            } else {
+                users.add(null);
+            }
         }
         return users;
     }
 }
-
-/*
-Сколько добавлено новых пользователей.
-Сколько изменено пользователей. Изменённым считается объект в котором изменилось имя.
-а id осталось прежним.
-Сколько удалено пользователей.
-*/
