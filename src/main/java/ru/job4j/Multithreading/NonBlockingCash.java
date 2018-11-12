@@ -13,14 +13,20 @@ public class NonBlockingCash {
         Base oldModel = getById(newModel.getId());
         int currentVersion = oldModel.getVersion();
         data.computeIfPresent(newModel.getId(), (integer, base) -> {
-            if (currentVersion != oldModel.getVersion()) {
-                throw new OptimisticException();
-            }
-            base.setValue(newModel.getValue());
+            isSameVersions(oldModel.getVersion(), currentVersion);
             base.increaseVersion();
+            isSameVersions(oldModel.getVersion(), currentVersion + 1);
+            base.setValue(newModel.getValue());
             return base;
         });
     }
+
+    private void isSameVersions(int oldModelVersion, int currentVersion) {
+        if (currentVersion != oldModelVersion) {
+            throw new OptimisticException();
+        }
+    }
+
 
     public void delete(Base model) {
         data.remove(model.getId());
