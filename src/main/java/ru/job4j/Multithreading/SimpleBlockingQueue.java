@@ -15,27 +15,29 @@ public class SimpleBlockingQueue<T> {
     private int count = 0;
 
     public synchronized void offer(T value) {
-        while (count > 10) {
+        while (queue.size() > 2) {
+            System.out.println("producer wait");
             try {
-                this.wait();
+                wait();
             } catch (InterruptedException ignored) {
             }
         }
-        this.notify();
+        notify();
         count++;
+        System.out.println("add value " + value);
         queue.add(value);
     }
 
-    public synchronized T poll() {
+    public synchronized T poll() throws InterruptedException {
         while (queue.peek() == null) {
-            try {
-                this.wait();
-            } catch (InterruptedException ignored) {
-            }
+            System.out.println("consumer wait");
+            wait();
         }
-        this.notify();
+        notify();
         count--;
-        return queue.poll();
+        T poll = queue.poll();
+        System.out.println("poll value " + poll);
+        return poll;
     }
 
     public boolean isEmpty() {
