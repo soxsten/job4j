@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static ru.job4j.Multithreading.NonBlockingCash.Base;
 
 public class NonBlockingCashTest {
 
@@ -19,7 +18,7 @@ public class NonBlockingCashTest {
         Thread thread1 = new Thread(() -> {
             try {
                 Base base = cash.getById(1);
-                base.value = "second";
+                base.setValue("second");
                 cash.update(base);
                 throw new RuntimeException("Invalid version");
             } catch (Exception e) {
@@ -30,7 +29,7 @@ public class NonBlockingCashTest {
         Thread thread2 = new Thread(() -> {
             try {
                 Base base = cash.getById(1);
-                base.value = "third";
+                base.setValue("third");
                 cash.update(base);
                 throw new RuntimeException("Invalid version");
             } catch (Exception e) {

@@ -17,7 +17,10 @@ public class StopConsumer {
         final Thread consumer = new Thread(
                 () -> {
                     while (Thread.currentThread().isInterrupted()) {
-                        System.out.println(queue.poll());
+                        try {
+                            System.out.println(queue.poll());
+                        } catch (InterruptedException ignored) {
+                        }
                         sleepFor(500);
                     }
                 }
