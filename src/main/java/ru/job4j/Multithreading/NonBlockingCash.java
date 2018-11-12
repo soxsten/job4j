@@ -6,42 +6,28 @@ public class NonBlockingCash {
     private ConcurrentHashMap<Integer, Base> data = new ConcurrentHashMap<>();
 
     public void add(Base model) {
-        data.put(model.id, model);
+        data.put(model.getId(), model);
     }
 
     public void update(Base newModel) {
-        Base oldModel = getById(newModel.id);
-        int currentVersion = oldModel.version;
-        synchronized (oldModel) {
-            if (currentVersion != oldModel.version) {
+        Base oldModel = getById(newModel.getId());
+        int currentVersion = oldModel.getVersion();
+        data.computeIfPresent(newModel.getId(), (integer, base) -> {
+            if (currentVersion != oldModel.getVersion()) {
                 throw new OptimisticException();
             }
-            data.computeIfPresent(newModel.id, (integer, base) -> {
-                base.value = newModel.value;
-                base.version++;
-                return base;
-            });
-        }
+            base.setValue(newModel.getValue());
+            base.increaseVersion();
+            return base;
+        });
     }
 
     public void delete(Base model) {
-        data.remove(model.id);
+        data.remove(model.getId());
     }
 
     public Base getById(int id) {
         return data.get(id);
-    }
-
-    static class Base {
-        int id;
-        volatile int version;
-        String value;
-
-        public Base(int id, String value) {
-            this.id = id;
-            this.version = 0;
-            this.value = value;
-        }
     }
 
     class OptimisticException extends RuntimeException {
