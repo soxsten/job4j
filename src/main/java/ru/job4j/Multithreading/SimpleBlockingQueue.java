@@ -13,9 +13,14 @@ public class SimpleBlockingQueue<T> {
     @GuardedBy("this")
     private Queue<T> queue = new LinkedList<>();
     private int count = 0;
+    private int maxSize;
+
+    public SimpleBlockingQueue(int maxSize) {
+        this.maxSize = maxSize;
+    }
 
     public synchronized void offer(T value) {
-        while (queue.size() > 2) {
+        while (queue.size() > maxSize) {
             System.out.println("producer wait");
             try {
                 wait();
@@ -45,6 +50,6 @@ public class SimpleBlockingQueue<T> {
     }
 
     private boolean isFull() {
-        return count > 10;
+        return count > maxSize;
     }
 }
