@@ -27,7 +27,7 @@ public class ThreadPool {
 
     private final class TaskWorker extends Thread {
         @Override
-        public synchronized void start() {
+        public void run() {
             while (isRunning) {
                 Runnable nextTask = null;
                 try {
