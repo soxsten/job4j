@@ -1,47 +1,60 @@
 package ru.job4j.Multithreading.bomberman;
 
-class Hero implements Moveable {
-    private int x;
-    private int y;
-    private int speed = 1;
+import java.util.concurrent.locks.ReentrantLock;
 
-    Hero(int x, int y) {
-        this.x = x;
-        this.y = y;
+class Hero implements Moveable {
+    private final Coordinates coordinates;
+    private int speed = 1;
+    private ReentrantLock currentPosition;
+
+    Hero(Coordinates coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override
     public int getX() {
-        return x;
+        return coordinates.getX();
     }
 
     @Override
     public int getY() {
-        return y;
+        return coordinates.getY();
     }
 
     @Override
-    public void down() {
-        y -= speed;
+    public ReentrantLock getCurrentPosition() {
+        return currentPosition;
     }
 
     @Override
-    public void left() {
-        x -= speed;
-    }
-
-    @Override
-    public void right() {
-        x += speed;
-    }
-
-    @Override
-    public void up() {
-        y += speed;
+    public Coordinates getCoordinates() {
+        return coordinates;
     }
 
     @Override
     public int getSpeed() {
         return this.speed;
+    }
+
+    @Override
+    public void move(Directions direction) {
+        switch (direction) {
+            case UP: {
+                coordinates.setY(coordinates.getY() + speed);
+                break;
+            }
+            case DOWN: {
+                coordinates.setY(coordinates.getY() - speed);
+                break;
+            }
+            case LEFT: {
+                coordinates.setX(coordinates.getX() - speed);
+                break;
+            }
+            case RIGHT: {
+                coordinates.setX(coordinates.getX() + speed);
+                break;
+            }
+        }
     }
 }
