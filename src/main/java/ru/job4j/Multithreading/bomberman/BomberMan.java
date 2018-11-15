@@ -4,19 +4,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class BomberMan {
     private final ReentrantLock[][] board;
-    private Hero heroPosition;
+    private Hero hero = new Hero(0, 0);
     private int maxX;
     private int maxY;
 
     public BomberMan(int maxX, int maxY) {
         this.board = setup(maxX, maxY);
-    }
-
-    private void waitFor(int t) {
-        try {
-            wait(t);
-        } catch (InterruptedException ignored) {
-        }
     }
 
     private ReentrantLock[][] setup(int x, int y) {
@@ -29,18 +22,32 @@ public class BomberMan {
         return locks;
     }
 
-    private ReentrantLock getField(int x, int y) {
-        return board[x][y];
+    public boolean moveUp() {
+        return moveTo(Directions.UP, hero);
+    }
+
+    public boolean moveDown() {
+        return moveTo(Directions.DOWN, hero);
+    }
+
+    public boolean moveLeft() {
+        return moveTo(Directions.LEFT, hero);
+    }
+
+    public boolean moveRight() {
+        return moveTo(Directions.RIGHT, hero);
     }
 
     private boolean moveTo(Directions direction, Moveable object) {
         int speed = object.getSpeed();
+        ReentrantLock currentPosition = getField(object.getX(), object.getY());
         switch (direction) {
             case UP: {
                 if (canMoveBy(object.getY() + speed, maxY)) {
                     ReentrantLock field = getField(object.getX(), object.getY() + speed);
                     if (tryLockFieldBy(object, field)) {
                         object.up();
+                        currentPosition.unlock();
                         return true;
                     }
                 }
@@ -51,6 +58,7 @@ public class BomberMan {
                     ReentrantLock field = getField(object.getX(), object.getY() - speed);
                     if (tryLockFieldBy(object, field)) {
                         object.down();
+                        currentPosition.unlock();
                         return true;
                     }
                 }
@@ -61,6 +69,7 @@ public class BomberMan {
                     ReentrantLock field = getField(object.getX() - speed, object.getY());
                     if (tryLockFieldBy(object, field)) {
                         object.left();
+                        currentPosition.unlock();
                         return true;
                     }
                 }
@@ -71,6 +80,7 @@ public class BomberMan {
                     ReentrantLock field = getField(object.getX() + speed, object.getY());
                     if (tryLockFieldBy(object, field)) {
                         object.right();
+                        currentPosition.unlock();
                         return true;
                     }
                 }
@@ -78,6 +88,10 @@ public class BomberMan {
             }
         }
         return false;
+    }
+
+    private ReentrantLock getField(int x, int y) {
+        return board[x][y];
     }
 
     private boolean tryLockFieldBy(Moveable object, ReentrantLock field) {
@@ -98,5 +112,12 @@ public class BomberMan {
 
     private boolean canMoveBy(int coordinate, int coordinateMax) {
         return coordinate >= 0 && coordinate < coordinateMax;
+    }
+
+    private void waitFor(int t) {
+        try {
+            wait(t);
+        } catch (InterruptedException ignored) {
+        }
     }
 }
