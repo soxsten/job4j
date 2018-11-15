@@ -38,33 +38,61 @@ public class BomberMan {
         switch (direction) {
             case UP: {
                 if (canMoveBy(object.getY() + speed, maxY)) {
-                    object.up();
-                    return true;
+                    ReentrantLock field = getField(object.getX(), object.getY() + speed);
+                    if (tryLockFieldBy(object, field)) {
+                        object.up();
+                        return true;
+                    }
                 }
                 return false;
             }
             case DOWN: {
                 if (canMoveBy(object.getY() - speed, maxY)) {
-                    object.down();
-                    return true;
+                    ReentrantLock field = getField(object.getX(), object.getY() - speed);
+                    if (tryLockFieldBy(object, field)) {
+                        object.down();
+                        return true;
+                    }
                 }
                 return false;
             }
             case LEFT: {
                 if (canMoveBy(object.getX() - speed, maxX)) {
-                    object.left();
-                    return true;
+                    ReentrantLock field = getField(object.getX() - speed, object.getY());
+                    if (tryLockFieldBy(object, field)) {
+                        object.left();
+                        return true;
+                    }
                 }
                 return false;
             }
             case RIGHT: {
                 if (canMoveBy(object.getX() + speed, maxX)) {
-                    object.right();
-                    return true;
+                    ReentrantLock field = getField(object.getX() + speed, object.getY());
+                    if (tryLockFieldBy(object, field)) {
+                        object.right();
+                        return true;
+                    }
                 }
                 return false;
             }
         }
+        return false;
+    }
+
+    private boolean tryLockFieldBy(Moveable object, ReentrantLock field) {
+        int count = 1;
+        int countMax = 2;
+        do {
+            boolean isLocked = field.tryLock();
+            if (isLocked) {
+                return true;
+            }
+            if (count < countMax) {
+                waitFor(500);
+            }
+            count++;
+        } while (count <= countMax);
         return false;
     }
 
