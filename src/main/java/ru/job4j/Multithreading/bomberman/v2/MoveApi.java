@@ -41,6 +41,10 @@ public class MoveApi {
         board.move(moveable, getRandomDirection(Directions.class));
     }
 
+    public void setStartPositionFor(Moveable2 moveable2) {
+        moveable2.setNewPosition(board.getLock());
+    }
+
     private void lockFor(Coordinates coordinates) {
         board.lockFor(coordinates);
     }
