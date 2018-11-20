@@ -1,4 +1,7 @@
-package ru.job4j.Multithreading.bomberman;
+package ru.job4j.Multithreading.bomberman.v2;
+
+import ru.job4j.Multithreading.bomberman.Coordinates;
+import ru.job4j.Multithreading.bomberman.Directions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,15 +75,20 @@ public class Board2 {
         return false;
     }
 
+    public boolean lockFor(Coordinates coordinates) {
+        Field field = board[coordinates.getY()][coordinates.getX()];
+        return field.getLock().tryLock();
+    }
+
     private boolean move(Moveable2 moveable, Coordinates coordinates, Field dist) throws InterruptedException {
-        if (dist.getLock().tryLock(500, TimeUnit.NANOSECONDS)) {
+        if (dist.getLock().tryLock(moveable.getTryLockTime(), TimeUnit.NANOSECONDS)) {
             moveable.getCurrentPosition().getLock().unlock();
             moveable.setNewPosition(dist);
         } else {
             List<Field> directions = getPossibleDirectionsFor(coordinates, moveable.getSpeed());
             while (true) {
                 for (Field field : directions) {
-                    if (field.getLock().tryLock(500, TimeUnit.NANOSECONDS)) {
+                    if (field.getLock().tryLock(moveable.getTryLockTime(), TimeUnit.NANOSECONDS)) {
                         moveable.getCurrentPosition().getLock().unlock();
                         moveable.setNewPosition(field);
                         return true;
