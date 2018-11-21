@@ -38,7 +38,7 @@ public class Board2 {
                 int newY = coordinates.getY() + moveable.getSpeed();
                 if (canMoveBy(newY, maxY)) {
                     Field dist = getField(coordinates.getX(), newY);
-                    System.out.println("Хочу пойти вверх");
+                    System.out.println("РҐРѕС‡Сѓ РїРѕР№С‚Рё РІРІРµСЂС…");
                     if (move(moveable, dist)) {
                         return true;
                     }
@@ -49,7 +49,7 @@ public class Board2 {
                 int newY = coordinates.getY() - moveable.getSpeed();
                 if (canMoveBy(newY, maxY)) {
                     Field dist = getField(coordinates.getX(), newY);
-                    System.out.println("Хочу пойти вниз");
+                    System.out.println("РҐРѕС‡Сѓ РїРѕР№С‚Рё РІРЅРёР·");
                     if (move(moveable, dist)) {
                         return true;
                     }
@@ -60,7 +60,7 @@ public class Board2 {
                 int newX = coordinates.getX() - moveable.getSpeed();
                 if (canMoveBy(newX, maxX)) {
                     Field dist = getField(newX, coordinates.getY());
-                    System.out.println("Хочу пойти налево");
+                    System.out.println("РҐРѕС‡Сѓ РїРѕР№С‚Рё РЅР°Р»РµРІРѕ");
                     if (move(moveable, dist)) {
                         return true;
                     }
@@ -71,7 +71,7 @@ public class Board2 {
                 int newX = coordinates.getX() + moveable.getSpeed();
                 if (canMoveBy(newX, maxX)) {
                     Field dist = getField(newX, coordinates.getY());
-                    System.out.println("Хочу пойти вправо");
+                    System.out.println("РҐРѕС‡Сѓ РїРѕР№С‚Рё РІРїСЂР°РІРѕ");
                     if (move(moveable, dist)) {
                         return true;
                     }
@@ -102,11 +102,11 @@ public class Board2 {
         if (dist.getLock().tryLock(moveable.getTryLockTime(), TimeUnit.NANOSECONDS)) {
             moveable.getCurrentPosition().getLock().unlock();
             moveable.setNewPosition(dist);
-            System.out.println("Получилось");
+            System.out.println("РџРѕР»СѓС‡РёР»РѕСЃСЊ");
         } else {
             List<Field> directions = getPossibleDirectionsFor(moveable, moveable.getSpeed());
             if (directions.isEmpty()) {
-                System.out.println("Не могу двигаться");
+                System.out.println("РќРµ РјРѕРіСѓ РґРІРёРіР°С‚СЊСЃСЏ");
                 return false;
             }
             while (true) {
@@ -117,7 +117,7 @@ public class Board2 {
                             moveable.setNewPosition(field);
                             lock.unlock();
                         } catch (IllegalMonitorStateException e) {
-                            System.out.println("Не могу разблокировать клетку");
+                            System.out.println("РќРµ РјРѕРіСѓ СЂР°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ РєР»РµС‚РєСѓ");
                             return false;
                         }
                         Coordinates oldPos = moveable.getCurrentPosition().getCoordinates();
@@ -178,7 +178,7 @@ public class Board2 {
     }
 
     private void printDirection(Coordinates oldPos, Coordinates newPos) {
-        String s = "В итоге пошел в: ";
+        String s = "Р’ РёС‚РѕРіРµ РїРѕС€РµР» РІ: ";
         if (newPos.getX() > oldPos.getX()) {
             System.out.println(s + Directions.RIGHT);
         }

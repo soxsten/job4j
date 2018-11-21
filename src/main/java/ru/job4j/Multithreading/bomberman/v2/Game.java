@@ -22,7 +22,7 @@ public class Game {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        Game game = new Game(4, 4, 1, new Hero2(1, 500));
+        Game game = new Game(4, 4, 0, new Hero2(1, 500));
         game.start();
         game.stop();
     }
