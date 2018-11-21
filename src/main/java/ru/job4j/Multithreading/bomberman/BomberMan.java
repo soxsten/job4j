@@ -1,6 +1,6 @@
 package ru.job4j.Multithreading.bomberman;
 
-import static ru.job4j.Multithreading.bomberman.Directions.getRandomDirection;
+import static ru.job4j.Multithreading.bomberman.Directions.*;
 
 public class BomberMan {
     private final Board board;
@@ -11,19 +11,19 @@ public class BomberMan {
     }
 
     public boolean moveUp(Moveable moveable) throws InterruptedException {
-        return board.move(moveable, Directions.UP);
+        return board.move(moveable, UP);
     }
 
     public boolean moveDown(Moveable moveable) throws InterruptedException {
-        return board.move(moveable, Directions.DOWN);
+        return board.move(moveable, DOWN);
     }
 
     public boolean moveLeft(Moveable moveable) throws InterruptedException {
-        return board.move(moveable, Directions.LEFT);
+        return board.move(moveable, LEFT);
     }
 
     public boolean moveRight(Moveable moveable) throws InterruptedException {
-        return board.move(moveable, Directions.RIGHT);
+        return board.move(moveable, RIGHT);
     }
 
     public void moveNonStopFor(Moveable moveable) throws InterruptedException {

@@ -2,7 +2,7 @@ package ru.job4j.Multithreading.bomberman;
 
 import java.util.Random;
 
-enum Directions {
+public enum Directions {
     UP, DOWN, LEFT, RIGHT;
 
     public static <T extends Enum<?>> T getRandomDirection(Class<T> clazz) {

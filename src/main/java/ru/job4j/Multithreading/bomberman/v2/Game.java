@@ -21,7 +21,7 @@ public class Game {
         this.moveApi = generateImpassableAreas(sizeX, sizeY, numberOfImpassableAreas);
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         Game game = new Game(4, 4, 0, new Hero2(1, 500));
         game.start();
         game.stop();
