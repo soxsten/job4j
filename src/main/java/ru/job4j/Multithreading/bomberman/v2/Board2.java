@@ -119,7 +119,7 @@ public class Board2 {
         return false;
     }
 
-    private boolean moveSomewhere(Moveable2 moveable) throws InterruptedException {
+    public boolean moveSomewhere(Moveable2 moveable) throws InterruptedException {
         List<Field> directions = getPossibleDirectionsFor(moveable);
         if (directions.isEmpty()) {
             printBoard(moveable.getCurrentPosition().getCoordinates());

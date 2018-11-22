@@ -5,8 +5,6 @@ import ru.job4j.Multithreading.bomberman.Directions;
 
 import java.util.List;
 
-import static ru.job4j.Multithreading.bomberman.Directions.getRandomDirection;
-
 public class MoveApi {
     private final Board2 board;
 
@@ -38,7 +36,7 @@ public class MoveApi {
     }
 
     public void moveSomewhere(Moveable2 moveable) throws InterruptedException {
-        board.move(moveable, getRandomDirection(Directions.class));
+        board.moveSomewhere(moveable);
     }
 
     public Board2.Field getRandomLock() {

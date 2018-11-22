@@ -25,11 +25,4 @@ public class BomberMan {
     public boolean moveRight(Moveable moveable) throws InterruptedException {
         return board.move(moveable, RIGHT);
     }
-
-    public void moveNonStopFor(Moveable moveable) throws InterruptedException {
-        while (true) {
-            wait(1000);
-            board.move(moveable, getRandomDirection(Directions.class));
-        }
-    }
 }

@@ -94,6 +94,7 @@ public class Game {
                     moveApi.moveUp(hero);
                     moveApi.moveUp(hero);
                     moveApi.moveUp(hero);
+                    moveApi.moveSomewhere(hero);
                     System.out.println("Закончил работу");
                 } catch (Exception e) {
                     e.printStackTrace();
