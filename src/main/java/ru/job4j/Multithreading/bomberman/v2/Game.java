@@ -49,7 +49,7 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        Game game = new Game(4, 4, 0, new Hero2(1, 500));
+        Game game = new Game(4, 4, 5, new Hero2(1, 500));
         game.start();
         game.stop();
     }
@@ -57,6 +57,7 @@ public class Game {
     private class MonsterMover extends Thread {
 
         private Moveable2 monster;
+
         public MonsterMover(Moveable2 monster) {
             this.monster = monster;
         }
@@ -64,21 +65,22 @@ public class Game {
         @Override
         public void run() {
             while (true) {
-                moveApi.getRandomLock();
+                Board2.Field lock = moveApi.getRandomLock();
+                lock.getLock().lock();
+                monster.setNewPosition(lock);
                 try {
                     moveApi.moveSomewhere(monster);
                 } catch (InterruptedException e) {
-                    System.out.println(e);
-                    break;
+                    e.printStackTrace();
                 }
             }
         }
-
     }
 
     private class HeroMover extends Thread {
 
         private Moveable2 hero;
+
         public HeroMover(Moveable2 hero) {
             this.hero = hero;
         }
@@ -88,17 +90,13 @@ public class Game {
             Board2.Field pos = moveApi.getRandomLock();
             pos.getLock().lock();
             hero.setNewPosition(pos);
+            while (true) {
                 try {
-                    System.out.println("Начал работу");
-                    moveApi.moveUp(hero);
-                    moveApi.moveUp(hero);
-                    moveApi.moveUp(hero);
-                    moveApi.moveUp(hero);
                     moveApi.moveSomewhere(hero);
-                    System.out.println("Закончил работу");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
         }
     }
 }
