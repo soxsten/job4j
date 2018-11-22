@@ -31,54 +31,61 @@ public class Board2 {
     }
 
     public boolean move(Moveable2 moveable, Directions direction) throws InterruptedException {
-        printBoard(moveable);
         switch (direction) {
             case UP: {
-                Coordinates coordinates = moveable.getCurrentPosition().coordinates;
-                int newY = coordinates.getY() + moveable.getSpeed();
-                if (canMoveBy(newY, maxY)) {
-                    Field dist = getField(coordinates.getX(), newY);
-                    System.out.println("Хочу пойти вверх");
-                    if (move(moveable, dist)) {
-                        return true;
-                    }
-                }
-            }
-            case DOWN: {
+                System.out.println("Хочу пойти ВВЕРХ");
                 Coordinates coordinates = moveable.getCurrentPosition().coordinates;
                 int newY = coordinates.getY() - moveable.getSpeed();
+                int oldX = coordinates.getX();
                 if (canMoveBy(newY, maxY)) {
-                    Field dist = getField(coordinates.getX(), newY);
-                    System.out.println("Хочу пойти вниз");
-                    if (move(moveable, dist)) {
+                    Field dist = getField(oldX, newY);
+                    if (moveByDirection(moveable, dist)) {
                         return true;
                     }
                 }
+                break;
+            }
+            case DOWN: {
+                System.out.println("Хочу пойти ВНИЗ");
+                Coordinates coordinates = moveable.getCurrentPosition().coordinates;
+                int newY = coordinates.getY() + moveable.getSpeed();
+                int oldX = coordinates.getX();
+                if (canMoveBy(newY, maxY)) {
+                    Field dist = getField(oldX, newY);
+                    if (moveByDirection(moveable, dist)) {
+                        return true;
+                    }
+                }
+                break;
             }
             case LEFT: {
+                System.out.println("Хочу пойти НАЛЕВО");
                 Coordinates coordinates = moveable.getCurrentPosition().coordinates;
+                int oldY = coordinates.getY();
                 int newX = coordinates.getX() - moveable.getSpeed();
                 if (canMoveBy(newX, maxX)) {
-                    Field dist = getField(newX, coordinates.getY());
-                    System.out.println("Хочу пойти налево");
-                    if (move(moveable, dist)) {
+                    Field dist = getField(newX, oldY);
+                    if (moveByDirection(moveable, dist)) {
                         return true;
                     }
                 }
+                break;
             }
             case RIGHT: {
+                System.out.println("Хочу пойти ВПРАВО");
                 Coordinates coordinates = moveable.getCurrentPosition().coordinates;
+                int oldY = coordinates.getY();
                 int newX = coordinates.getX() + moveable.getSpeed();
                 if (canMoveBy(newX, maxX)) {
-                    Field dist = getField(newX, coordinates.getY());
-                    System.out.println("Хочу пойти вправо");
-                    if (move(moveable, dist)) {
+                    Field dist = getField(newX, oldY);
+                    if (moveByDirection(moveable, dist)) {
                         return true;
                     }
                 }
+                break;
             }
         }
-        return false;
+        return moveSomewhere(moveable);
     }
 
     public boolean lockFor(Coordinates coordinates) {
@@ -93,69 +100,74 @@ public class Board2 {
         while (true) {
             Field field = board[y.nextInt(maxY - 1)][x.nextInt(maxX - 1)];
             if (!field.getLock().isLocked()) {
+                System.out.println("Начальная позиция");
+                printBoard(field.getCoordinates());
                 return field;
             }
         }
     }
 
-    private boolean move(Moveable2 moveable, Field dist) throws InterruptedException {
+    private boolean moveByDirection(Moveable2 moveable, Field dist) throws InterruptedException {
         if (dist.getLock().tryLock(moveable.getTryLockTime(), TimeUnit.NANOSECONDS)) {
             moveable.getCurrentPosition().getLock().unlock();
             moveable.setNewPosition(dist);
+            printBoard(moveable.getCurrentPosition().getCoordinates());
             System.out.println("Получилось");
-        } else {
-            List<Field> directions = getPossibleDirectionsFor(moveable, moveable.getSpeed());
-            if (directions.isEmpty()) {
-                System.out.println("Не могу двигаться");
-                return false;
-            }
-            while (true) {
-                for (Field field : directions) {
-                    if (field.getLock().tryLock(moveable.getTryLockTime(), TimeUnit.NANOSECONDS)) {
-                        try {
-                            ReentrantLock lock = moveable.getCurrentPosition().getLock();
-                            moveable.setNewPosition(field);
-                            lock.unlock();
-                        } catch (IllegalMonitorStateException e) {
-                            System.out.println("Не могу разблокировать клетку");
-                            return false;
-                        }
-                        Coordinates oldPos = moveable.getCurrentPosition().getCoordinates();
-                        Coordinates newPos = field.getCoordinates();
-                        printDirection(oldPos, newPos);
-                        return true;
-                    }
-                }
-            }
+            System.out.println();
+            return true;
         }
         return false;
     }
 
-    private List<Field> getPossibleDirectionsFor(Moveable2 moveable2, int speed) throws InterruptedException {
+    private boolean moveSomewhere(Moveable2 moveable) throws InterruptedException {
+        List<Field> directions = getPossibleDirectionsFor(moveable);
+        if (directions.isEmpty()) {
+            printBoard(moveable.getCurrentPosition().getCoordinates());
+            System.out.println("Не могу двигаться");
+            return false;
+        }
+        while (true) {
+            Random random = new Random();
+            int i = random.nextInt(directions.size() - 1);
+            Field field1 = directions.get(i);
+            ReentrantLock lock = field1.getLock();
+            if (lock.tryLock(moveable.getTryLockTime(), TimeUnit.NANOSECONDS)) {
+                moveable.getCurrentPosition().getLock().unlock();
+                Coordinates oldPos = moveable.getCurrentPosition().getCoordinates();
+                moveable.setNewPosition(field1);
+                Coordinates newPos = field1.getCoordinates();
+                printBoard(moveable.getCurrentPosition().getCoordinates());
+                printDirection(oldPos, newPos);
+                return true;
+            }
+        }
+    }
+
+    private List<Field> getPossibleDirectionsFor(Moveable2 moveable2) throws InterruptedException {
         Coordinates coordinates = moveable2.getCurrentPosition().getCoordinates();
         List<Field> directions = new ArrayList<>();
-        int incX = coordinates.getX() + speed;
+        int incX = coordinates.getX() + moveable2.getSpeed();
         if (canMoveBy(incX, maxX)) {
             Field field = getField(incX, coordinates.getY());
             if (tryLockFor(field, moveable2)) {
                 directions.add(field);
             }
         }
-        int decX = coordinates.getX() - speed;
+        int decX = coordinates.getX() - moveable2.getSpeed();
         if (canMoveBy(decX, maxX)) {
             Field field = getField(decX, coordinates.getY());
             if (tryLockFor(field, moveable2)) {
                 directions.add(field);
             }
         }
-        int incY = coordinates.getY() + speed;
+        int incY = coordinates.getY() + moveable2.getSpeed();
         if (canMoveBy(incY, maxY)) {
             Field field = getField(coordinates.getX(), incY);
             if (tryLockFor(field, moveable2)) {
                 directions.add(field);
             }
         }
-        int decY = coordinates.getY() - speed;
+        int decY = coordinates.getY() - moveable2.getSpeed();
         if (canMoveBy(decY, maxY)) {
             Field field = getField(coordinates.getX(), decY);
             if (tryLockFor(field, moveable2)) {
@@ -193,11 +205,16 @@ public class Board2 {
         }
     }
 
-    private void printBoard(Moveable2 moveable2) {
-        Coordinates coordinates = moveable2.getCurrentPosition().getCoordinates();
+    private void printBoard(Coordinates coordinates) {
         Field field = board[coordinates.getY()][coordinates.getX()];
         Coordinates pos = field.getCoordinates();
+        System.out.print(" ");
+        for (int i = 0; i < maxX; i++) {
+            System.out.print(" " + i + " ");
+        }
+        System.out.println();
         for (int y = 0; y < maxY; y++) {
+            System.out.print(y);
             for (int x = 0; x < maxX; x++) {
                 if (pos.getX() == x && pos.getY() == y) {
                     print("H");

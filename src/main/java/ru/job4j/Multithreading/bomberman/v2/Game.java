@@ -21,12 +21,6 @@ public class Game {
         this.moveApi = generateImpassableAreas(sizeX, sizeY, numberOfImpassableAreas);
     }
 
-    public static void main(String[] args) {
-        Game game = new Game(4, 4, 0, new Hero2(1, 500));
-        game.start();
-        game.stop();
-    }
-
     private MoveApi generateImpassableAreas(int x, int y, int numberOfImpassableAreas) {
         Random randomX = new Random();
         Random randomY = new Random();
@@ -54,9 +48,15 @@ public class Game {
         pool.shutdown();
     }
 
-    private class MonsterMover extends Thread {
-        private Moveable2 monster;
+    public static void main(String[] args) {
+        Game game = new Game(4, 4, 0, new Hero2(1, 500));
+        game.start();
+        game.stop();
+    }
 
+    private class MonsterMover extends Thread {
+
+        private Moveable2 monster;
         public MonsterMover(Moveable2 monster) {
             this.monster = monster;
         }
@@ -64,33 +64,40 @@ public class Game {
         @Override
         public void run() {
             while (true) {
-                moveApi.setStartPositionFor(monster);
+                moveApi.getRandomLock();
                 try {
                     moveApi.moveSomewhere(monster);
                 } catch (InterruptedException e) {
+                    System.out.println(e);
                     break;
                 }
             }
         }
+
     }
 
     private class HeroMover extends Thread {
-        private Moveable2 hero;
 
+        private Moveable2 hero;
         public HeroMover(Moveable2 hero) {
             this.hero = hero;
         }
 
         @Override
         public void run() {
-            moveApi.setStartPositionFor(hero);
-            while (true) {
+            Board2.Field pos = moveApi.getRandomLock();
+            pos.getLock().lock();
+            hero.setNewPosition(pos);
                 try {
-                    moveApi.moveSomewhere(hero);
-                } catch (InterruptedException e) {
-                    break;
+                    System.out.println("Начал работу");
+                    moveApi.moveUp(hero);
+                    moveApi.moveUp(hero);
+                    moveApi.moveUp(hero);
+                    moveApi.moveUp(hero);
+                    System.out.println("Закончил работу");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }
         }
     }
 }
