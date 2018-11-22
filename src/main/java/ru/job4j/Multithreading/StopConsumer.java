@@ -3,7 +3,7 @@ package ru.job4j.Multithreading;
 public class StopConsumer {
 
     public static void main(String[] args) throws InterruptedException {
-        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<Integer>();
+        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<Integer>(10);
         Thread producer = new Thread(
                 () -> {
                     for (int index = 0; index != 3; index++) {

@@ -54,7 +54,7 @@ public class UserStoreTest {
         SimpleArray<Role> data = getTestData();
         RoleStore store = new RoleStore(data);
         Role expected = data.get(3);
-        Role actual = (Role) store.findById("3");
+        Role actual = store.findById("3");
         Assert.assertThat(expected, is(actual));
     }
 
