@@ -7,7 +7,7 @@ public class StackContainer<T> {
 
     public T poll() {
         if (container.getSize() > 0) {
-            T t = (T) container.get(0);
+            T t = container.get(0);
             container.deleteFirst();
             return t;
         }
