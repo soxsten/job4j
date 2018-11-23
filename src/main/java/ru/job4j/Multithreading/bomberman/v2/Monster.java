@@ -6,11 +6,12 @@ public class Monster implements Moveable2 {
     private Field field;
     private int speed;
     private int tryLockTime;
+    private int waitingTime;
 
-    public Monster(Field field, int speed, int tryLockTime) {
-        this.field = field;
+    public Monster(int speed, int tryLockTime, int waitingTime) {
         this.speed = speed;
         this.tryLockTime = tryLockTime;
+        this.waitingTime = waitingTime;
     }
 
     @Override
@@ -31,5 +32,10 @@ public class Monster implements Moveable2 {
     @Override
     public int getSpeed() {
         return speed;
+    }
+
+    @Override
+    public int getWaitingTime() {
+        return waitingTime;
     }
 }

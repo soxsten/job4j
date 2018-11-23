@@ -10,4 +10,6 @@ public interface Moveable2 {
     int getSpeed();
 
     int getTryLockTime();
+
+    int getWaitingTime();
 }

@@ -114,6 +114,7 @@ public class Board2 {
             printBoard(moveable.getCurrentPosition().getCoordinates());
             System.out.println("Получилось");
             System.out.println();
+            Thread.sleep(moveable.getWaitingTime());
             return true;
         }
         return false;
@@ -128,8 +129,9 @@ public class Board2 {
         }
         while (true) {
             Random random = new Random();
-            int i = random.nextInt(directions.size() - 1);
-            Field field1 = directions.get(i);
+            int bound = directions.size() - 1;
+            int index = bound == 0 ? 0 : random.nextInt(bound);
+            Field field1 = directions.get(index);
             ReentrantLock lock = field1.getLock();
             if (lock.tryLock(moveable.getTryLockTime(), TimeUnit.NANOSECONDS)) {
                 moveable.getCurrentPosition().getLock().unlock();
@@ -138,6 +140,7 @@ public class Board2 {
                 Coordinates newPos = field1.getCoordinates();
                 printBoard(moveable.getCurrentPosition().getCoordinates());
                 printDirection(oldPos, newPos);
+                Thread.sleep(moveable.getWaitingTime());
                 return true;
             }
         }

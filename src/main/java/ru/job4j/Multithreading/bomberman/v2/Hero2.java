@@ -6,10 +6,12 @@ public class Hero2 implements Moveable2 {
     private Field field;
     private int speed;
     private int tryLockTime;
+    private int waitingTime;
 
-    public Hero2(int speed, int tryLockTime) {
+    public Hero2(int speed, int tryLockTime, int waitingTime) {
         this.speed = speed;
         this.tryLockTime = tryLockTime;
+        this.waitingTime = waitingTime;
     }
 
     @Override
@@ -30,5 +32,10 @@ public class Hero2 implements Moveable2 {
     @Override
     public int getSpeed() {
         return speed;
+    }
+
+    @Override
+    public int getWaitingTime() {
+        return waitingTime;
     }
 }

@@ -49,7 +49,7 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        Game game = new Game(4, 4, 5, new Hero2(1, 500));
+        Game game = new Game(4, 4, 5, new Hero2(1, 500, 1000));
         game.start();
         game.stop();
     }
@@ -75,6 +75,7 @@ public class Game {
                 }
             }
         }
+
     }
 
     private class HeroMover extends Thread {
@@ -98,5 +99,6 @@ public class Game {
                 }
             }
         }
+
     }
 }
