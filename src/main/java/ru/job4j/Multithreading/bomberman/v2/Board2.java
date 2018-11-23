@@ -98,7 +98,7 @@ public class Board2 {
         Random x = new Random();
         Random y = new Random();
         while (true) {
-            Field field = board[y.nextInt(maxY - 1)][x.nextInt(maxX - 1)];
+            Field field = board[y.nextInt(maxY)][x.nextInt(maxX)];
             if (!field.getLock().isLocked()) {
                 System.out.println("Начальная позиция");
                 printBoard();
@@ -129,7 +129,7 @@ public class Board2 {
         }
         while (true) {
             Random random = new Random();
-            int bound = directions.size() - 1;
+            int bound = directions.size();
             int index = bound == 0 ? 0 : random.nextInt(bound);
             Field field1 = directions.get(index);
             ReentrantLock lock = field1.getLock();
@@ -206,10 +206,10 @@ public class Board2 {
     private void printDirection(Coordinates oldPos, Coordinates newPos) {
         String s = "Пошел в: ";
         if (newPos.getX() > oldPos.getX()) {
-            System.out.println(s + "ВЛЕВО");
+            System.out.println(s + "ВПРАВО");
         }
         if (newPos.getX() < oldPos.getX()) {
-            System.out.println(s + "ВПРАВО");
+            System.out.println(s + "ВЛЕВО");
         }
         if (newPos.getY() < oldPos.getY()) {
             System.out.println(s + "ВВЕРХ");
