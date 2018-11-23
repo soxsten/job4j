@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Game {
-
     private List<Moveable2> gameObjects = new ArrayList<>();
     private MoveApi moveApi;
     ExecutorService pool;
@@ -49,13 +48,13 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        Game game = new Game(4, 4, 5, new Hero2(1, 500, 1000));
+        Hero2 hero = new Hero2(1, 500, 1000, Type.HERO);
+        Monster monster = new Monster(1, 5000, 1000, Type.MONSTER);
+        Game game = new Game(4, 4, 0, hero, monster);
         game.start();
         game.stop();
     }
-
     private class MonsterMover extends Thread {
-
         private Moveable2 monster;
 
         public MonsterMover(Moveable2 monster) {
@@ -65,13 +64,16 @@ public class Game {
         @Override
         public void run() {
             while (true) {
-                Board2.Field lock = moveApi.getRandomLock();
-                lock.getLock().lock();
-                monster.setNewPosition(lock);
-                try {
+                Board2.Field pos = moveApi.getRandomLock();
+                pos.getLock().lock();
+                pos.setHoldedBy(monster.getType());
+                monster.setNewPosition(pos);
+                while (true) {
+                    try {
                     moveApi.moveSomewhere(monster);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -79,7 +81,6 @@ public class Game {
     }
 
     private class HeroMover extends Thread {
-
         private Moveable2 hero;
 
         public HeroMover(Moveable2 hero) {
@@ -90,6 +91,7 @@ public class Game {
         public void run() {
             Board2.Field pos = moveApi.getRandomLock();
             pos.getLock().lock();
+            pos.setHoldedBy(hero.getType());
             hero.setNewPosition(pos);
             while (true) {
                 try {

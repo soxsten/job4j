@@ -24,7 +24,7 @@ public class Board2 {
         Field[][] board = new Field[maxX][maxY];
         for (int y = 0; y < this.maxY; y++) {
             for (int x = 0; x < this.maxX; x++) {
-                board[y][x] = new Field(new ReentrantLock(), new Coordinates(x, y));
+                board[y][x] = new Field(new ReentrantLock(), new Coordinates(x, y), Type.NONE);
             }
         }
         return board;
@@ -90,7 +90,7 @@ public class Board2 {
 
     public boolean lockFor(Coordinates coordinates) {
         Field field = board[coordinates.getY()][coordinates.getX()];
-        field.blockArea();
+        field.setHoldedBy(Type.BLOCKED_AREA);
         return field.getLock().tryLock();
     }
 
@@ -101,7 +101,7 @@ public class Board2 {
             Field field = board[y.nextInt(maxY - 1)][x.nextInt(maxX - 1)];
             if (!field.getLock().isLocked()) {
                 System.out.println("Начальная позиция");
-                printBoard(field.getCoordinates());
+                printBoard();
                 return field;
             }
         }
@@ -111,7 +111,7 @@ public class Board2 {
         if (dist.getLock().tryLock(moveable.getTryLockTime(), TimeUnit.NANOSECONDS)) {
             moveable.getCurrentPosition().getLock().unlock();
             moveable.setNewPosition(dist);
-            printBoard(moveable.getCurrentPosition().getCoordinates());
+            printBoard();
             System.out.println("Получилось");
             System.out.println();
             Thread.sleep(moveable.getWaitingTime());
@@ -123,7 +123,7 @@ public class Board2 {
     public boolean moveSomewhere(Moveable2 moveable) throws InterruptedException {
         List<Field> directions = getPossibleDirectionsFor(moveable);
         if (directions.isEmpty()) {
-            printBoard(moveable.getCurrentPosition().getCoordinates());
+            printBoard();
             System.out.println("Не могу двигаться");
             return false;
         }
@@ -134,11 +134,14 @@ public class Board2 {
             Field field1 = directions.get(index);
             ReentrantLock lock = field1.getLock();
             if (lock.tryLock(moveable.getTryLockTime(), TimeUnit.NANOSECONDS)) {
-                moveable.getCurrentPosition().getLock().unlock();
+                Field currentPosition = moveable.getCurrentPosition();
+                currentPosition.setHoldedBy(Type.NONE);
+                currentPosition.getLock().unlock();
                 Coordinates oldPos = moveable.getCurrentPosition().getCoordinates();
                 moveable.setNewPosition(field1);
+                field1.setHoldedBy(moveable.getType());
                 Coordinates newPos = field1.getCoordinates();
-                printBoard(moveable.getCurrentPosition().getCoordinates());
+                printBoard();
                 printDirection(oldPos, newPos);
                 Thread.sleep(moveable.getWaitingTime());
                 return true;
@@ -216,9 +219,7 @@ public class Board2 {
         }
     }
 
-    private void printBoard(Coordinates coordinates) {
-        Field field = board[coordinates.getY()][coordinates.getX()];
-        Coordinates pos = field.getCoordinates();
+    private void printBoard() {
         System.out.print(" ");
         for (int i = 0; i < maxX; i++) {
             System.out.print(" " + i + " ");
@@ -227,14 +228,24 @@ public class Board2 {
         for (int y = 0; y < maxY; y++) {
             System.out.print(y);
             for (int x = 0; x < maxX; x++) {
-                if (pos.getX() == x && pos.getY() == y) {
-                    print("H");
-                    continue;
-                }
-                if (board[y][x].isBlockedArea()) {
-                    print("x");
-                } else {
-                    print(" ");
+                Type holdedBy = board[y][x].getHoldedBy();
+                switch (holdedBy) {
+                    case HERO: {
+                        print("H");
+                        break;
+                    }
+                    case MONSTER: {
+                        print("M");
+                        break;
+                    }
+                    case BLOCKED_AREA: {
+                        print("x");
+                        break;
+                    }
+                    case NONE: {
+                        print(" ");
+                        break;
+                    }
                 }
             }
             System.out.println();
@@ -249,10 +260,12 @@ public class Board2 {
         private ReentrantLock lock;
         private volatile boolean isBlockedArea = false;
         private Coordinates coordinates;
+        private Type holdedBy;
 
-        public Field(ReentrantLock lock, Coordinates coordinates) {
+        public Field(ReentrantLock lock, Coordinates coordinates, Type type) {
             this.lock = lock;
             this.coordinates = coordinates;
+            this.holdedBy = type;
         }
 
         public ReentrantLock getLock() {
@@ -263,12 +276,16 @@ public class Board2 {
             return coordinates;
         }
 
-        public void blockArea() {
-            isBlockedArea = true;
-        }
-
         public boolean isBlockedArea() {
             return isBlockedArea;
+        }
+
+        public Type getHoldedBy() {
+            return holdedBy;
+        }
+
+        public void setHoldedBy(Type holdedBy) {
+            this.holdedBy = holdedBy;
         }
     }
 }

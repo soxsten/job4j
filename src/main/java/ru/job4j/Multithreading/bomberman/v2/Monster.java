@@ -7,11 +7,13 @@ public class Monster implements Moveable2 {
     private int speed;
     private int tryLockTime;
     private int waitingTime;
+    private Type type;
 
-    public Monster(int speed, int tryLockTime, int waitingTime) {
+    public Monster(int speed, int tryLockTime, int waitingTime, Type type) {
         this.speed = speed;
         this.tryLockTime = tryLockTime;
         this.waitingTime = waitingTime;
+        this.type = type;
     }
 
     @Override
@@ -37,5 +39,10 @@ public class Monster implements Moveable2 {
     @Override
     public int getWaitingTime() {
         return waitingTime;
+    }
+
+    @Override
+    public Type getType() {
+        return type;
     }
 }

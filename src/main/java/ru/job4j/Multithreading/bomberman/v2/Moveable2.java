@@ -12,4 +12,6 @@ public interface Moveable2 {
     int getTryLockTime();
 
     int getWaitingTime();
+
+    Type getType();
 }
