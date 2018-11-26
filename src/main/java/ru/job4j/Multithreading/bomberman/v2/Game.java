@@ -9,25 +9,39 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static ru.job4j.Multithreading.bomberman.v2.Type.HERO;
+
 public class Game {
     private List<Moveable2> gameObjects = new ArrayList<>();
     private MoveApi moveApi;
-    ExecutorService pool;
+    private ExecutorService pool;
 
     public Game(int sizeX, int sizeY, int numberOfImpassableAreas, Moveable2 hero, Moveable2... monsters) {
         gameObjects.add(hero);
         Collections.addAll(gameObjects, monsters);
-        this.moveApi = generateImpassableAreas(sizeX, sizeY, numberOfImpassableAreas);
+        this.moveApi = generateImpassableAreas(sizeX, sizeY, numberOfImpassableAreas, hero);
     }
 
-    private MoveApi generateImpassableAreas(int x, int y, int numberOfImpassableAreas) {
+    public static void main(String[] args) {
+        Hero2 hero = new Hero2(0, 500, 1000, HERO);
+        Monster monster = new Monster(1, 5000, 1000, Type.MONSTER);
+        Game game = new Game(2, 2, 0, hero, monster);
+        game.start();
+        game.stop();
+    }
+
+    private MoveApi generateImpassableAreas(int x, int y, int numberOfImpassableAreas, Moveable2 hero) {
         Random randomX = new Random();
         Random randomY = new Random();
         ArrayList<Coordinates> coordinates = new ArrayList<>();
         for (int i = 0; i < numberOfImpassableAreas; i++) {
-            coordinates.add(new Coordinates(randomX.nextInt(x - 1), randomY.nextInt(y - 1)));
+            coordinates.add(new Coordinates(randomX.nextInt(x), randomY.nextInt(y)));
         }
-        return new MoveApi(x, y, coordinates);
+        return new MoveApi(x, y, hero, coordinates);
+    }
+
+    public void stop() {
+        pool.shutdown();
     }
 
     public void start() {
@@ -41,19 +55,14 @@ public class Game {
                 pool.submit(new MonsterMover(moster));
             }
         }
+        while (true) {
+            if (!hero.isAlive()) {
+                stop();
+                break;
+            }
+        }
     }
 
-    public void stop() {
-        pool.shutdown();
-    }
-
-    public static void main(String[] args) {
-        Hero2 hero = new Hero2(1, 500, 1000, Type.HERO);
-        Monster monster = new Monster(1, 5000, 1000, Type.MONSTER);
-        Game game = new Game(4, 4, 0, hero, monster);
-        game.start();
-        game.stop();
-    }
     private class MonsterMover extends Thread {
         private Moveable2 monster;
 
@@ -63,21 +72,26 @@ public class Game {
 
         @Override
         public void run() {
-            while (true) {
-                Board2.Field pos = moveApi.getRandomLock();
-                pos.getLock().lock();
+            while (!pool.isShutdown()) {
+                boolean isLocked;
+                Board2.Field pos;
+                do {
+                    pos = moveApi.getRandomLock(monster);
+                    isLocked = pos.getLock().tryLock();
+                } while (!isLocked);
                 pos.setHoldedBy(monster.getType());
                 monster.setNewPosition(pos);
-                while (true) {
+                while (!pool.isShutdown()) {
                     try {
-                    moveApi.moveSomewhere(monster);
+                        moveApi.moveSomewhere(monster);
+                    } catch (InterruptedException e) {
+                        break;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
         }
-
     }
 
     private class HeroMover extends Thread {
@@ -89,18 +103,23 @@ public class Game {
 
         @Override
         public void run() {
-            Board2.Field pos = moveApi.getRandomLock();
-            pos.getLock().lock();
+            boolean isLocked;
+            Board2.Field pos;
+            do {
+                pos = moveApi.getRandomLock(hero);
+                isLocked = pos.getLock().tryLock();
+            } while (!isLocked);
             pos.setHoldedBy(hero.getType());
             hero.setNewPosition(pos);
-            while (true) {
+            while (!pool.isShutdown()) {
                 try {
                     moveApi.moveSomewhere(hero);
+                } catch (InterruptedException e) {
+                    break;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
-
     }
 }

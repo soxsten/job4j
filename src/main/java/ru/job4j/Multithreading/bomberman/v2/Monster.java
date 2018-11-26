@@ -45,4 +45,13 @@ public class Monster implements Moveable2 {
     public Type getType() {
         return type;
     }
+
+    @Override
+    public boolean isAlive() {
+        return true;
+    }
+
+    @Override
+    public void dead() {
+    }
 }

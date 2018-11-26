@@ -8,12 +8,12 @@ import java.util.List;
 public class MoveApi {
     private final Board2 board;
 
-    public MoveApi(int maxX, int maxY) {
-        this.board = new Board2(maxX, maxY);
+    public MoveApi(int maxX, int maxY, Hero2 hero) {
+        this.board = new Board2(maxX, maxY, hero);
     }
 
-    public MoveApi(int maxX, int maxY, List<Coordinates> coordinates) {
-        this.board = new Board2(maxX, maxY);
+    public MoveApi(int maxX, int maxY, Moveable2 hero, List<Coordinates> coordinates) {
+        this.board = new Board2(maxX, maxY, hero);
         for (Coordinates coordinate : coordinates) {
             lockFor(coordinate);
         }
@@ -39,8 +39,8 @@ public class MoveApi {
         board.moveSomewhere(moveable);
     }
 
-    public Board2.Field getRandomLock() {
-        return board.getLock();
+    public Board2.Field getRandomLock(Moveable2 moveable2) {
+        return board.getLock(moveable2);
     }
 
     private void lockFor(Coordinates coordinates) {

@@ -14,4 +14,8 @@ public interface Moveable2 {
     int getWaitingTime();
 
     Type getType();
+
+    boolean isAlive();
+
+    void dead();
 }
